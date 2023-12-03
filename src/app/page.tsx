@@ -1,95 +1,125 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+'use client';
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+import {
+    Box,
+    Button,
+    Container,
+    CssBaseline,
+    LinearProgress,
+    LinearProgressProps,
+    Stack,
+    ThemeProvider,
+    Typography,
+    createTheme,
+} from '@mui/material';
+import { useCallback, useState } from 'react';
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+import PuzzleBoard from './board/puzzle/PuzzleBoard';
+import { pgns } from './pgns';
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+const darkTheme = createTheme({
+    palette: {
+        mode: 'dark',
+    },
+});
+
+export default function App() {
+    return (
+        <ThemeProvider theme={darkTheme}>
+            <CssBaseline />
+            <Prechess />
+        </ThemeProvider>
+    );
+}
+
+const normalise = (value: number, max: number) => (value * 100) / max;
+
+function LinearProgressWithLabel(
+    props: LinearProgressProps & { value: number; max: number }
+) {
+    return (
+        <Stack direction='row' sx={{ alignItems: 'center', mb: 1 }}>
+            <Box sx={{ flexGrow: 1, mr: 1 }}>
+                <LinearProgress
+                    variant='determinate'
+                    {...props}
+                    value={normalise(props.value, props.max)}
+                />
+            </Box>
+            <Typography variant='body2' color='text.secondary'>
+                {props.value}/{props.max} Exercises
+            </Typography>
+        </Stack>
+    );
+}
+
+function Prechess() {
+    const [index, setIndex] = useState(0);
+
+    const onNextPuzzle = useCallback(() => {
+        setIndex((v) => v + 1);
+    }, [setIndex]);
+
+    return (
+        <Container
+            maxWidth={false}
+            sx={{
+                pt: 4,
+                pb: 4,
+                px: '0 !important',
+                '--gap': '16px',
+                '--site-header-height': '80px',
+                '--site-header-margin': '150px',
+                '--player-header-height': '0px',
+                '--toc-width': '21vw',
+                '--underboard-width': '400px',
+                '--coach-width': '400px',
+                '--tools-height': '0px',
+                '--board-width':
+                    'calc(100vw - var(--coach-width) - 60px - var(--toc-width))',
+                '--board-height':
+                    'calc(100vh - var(--site-header-height) - var(--site-header-margin) - var(--tools-height) - 2 * var(--player-header-height))',
+                '--board-size': 'calc(min(var(--board-width), var(--board-height)))',
+            }}
         >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+            <Box
+                sx={{
+                    display: 'grid',
+                    rowGap: '0px',
+                    gridTemplateRows: {
+                        xs: 'auto auto',
+                    },
+                    gridTemplateColumns: {
+                        xs: '1fr',
+                        md: 'auto var(--board-size) auto',
+                    },
+                    gridTemplateAreas: {
+                        xs: '"subtitle" "pgn"',
+                        md: '". subtitle ." ". pgn ."',
+                    },
+                }}
+            >
+                <Stack mt={3} gridArea='subtitle'>
+                    {index < pgns.length ? (
+                        <LinearProgressWithLabel value={index} max={pgns.length} />
+                    ) : (
+                        <Stack alignItems='center' spacing={1}>
+                            <Typography>Great job completing the puzzles!</Typography>
+                            <Button variant='contained' onClick={() => setIndex(0)}>
+                                Restart
+                            </Button>
+                        </Stack>
+                    )}
+                </Stack>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+                {index < pgns.length && (
+                    <PuzzleBoard
+                        key={pgns[index]}
+                        pgn={pgns[index]}
+                        onNextPuzzle={onNextPuzzle}
+                    />
+                )}
+            </Box>
+        </Container>
+    );
 }
