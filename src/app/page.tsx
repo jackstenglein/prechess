@@ -1,8 +1,10 @@
 'use client';
 
+import axios from 'axios';
 import {
     Box,
     Button,
+    CircularProgress,
     Container,
     CssBaseline,
     LinearProgress,
@@ -12,10 +14,9 @@ import {
     Typography,
     createTheme,
 } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import PuzzleBoard from './board/puzzle/PuzzleBoard';
-import { pgns } from './pgns';
 
 const darkTheme = createTheme({
     palette: {
@@ -54,11 +55,60 @@ function LinearProgressWithLabel(
 }
 
 function Prechess() {
+    const [requestStatus, setRequestStatus] = useState('NOT_SENT');
+    const [pgns, setPgns] = useState<string[]>([]);
     const [index, setIndex] = useState(0);
 
     const onNextPuzzle = useCallback(() => {
         setIndex((v) => v + 1);
     }, [setIndex]);
+
+    useEffect(() => {
+        if (requestStatus === 'NOT_SENT') {
+            setRequestStatus('LOADING');
+            axios
+                .get<string>('https://prechess-pgns.s3.amazonaws.com/prechess.pgn')
+                .then((resp) => {
+                    console.log('resp: ', resp);
+                    setPgns(resp.data.split('\n\n\n').filter((pgn) => pgn.trim() !== ''));
+                    setRequestStatus('SUCCESS');
+                })
+                .catch((err) => {
+                    console.error('got PGNs: ', err);
+                    setRequestStatus('ERROR');
+                });
+        }
+    }, [requestStatus, setRequestStatus, setPgns]);
+
+    if (requestStatus === 'NOT_SENT' || requestStatus === 'LOADING') {
+        return (
+            <Container
+                maxWidth={false}
+                sx={{
+                    py: 4,
+                    display: 'flex',
+                    justifyContent: 'center',
+                }}
+            >
+                <CircularProgress />
+            </Container>
+        );
+    }
+
+    if (requestStatus === 'ERROR') {
+        return (
+            <Container
+                maxWidth={false}
+                sx={{
+                    py: 4,
+                    display: 'flex',
+                    justifyContent: 'center',
+                }}
+            >
+                <Typography>Failed to fetch PGNs</Typography>
+            </Container>
+        );
+    }
 
     return (
         <Container
