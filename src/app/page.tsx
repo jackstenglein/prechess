@@ -67,7 +67,11 @@ function Prechess() {
         if (requestStatus === 'NOT_SENT') {
             setRequestStatus('LOADING');
             axios
-                .get<string>('https://prechess-pgns.s3.amazonaws.com/prechess.pgn')
+                .get<string>('https://prechess-pgns.s3.amazonaws.com/prechess.pgn', {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                    },
+                })
                 .then((resp) => {
                     console.log('resp: ', resp);
                     setPgns(resp.data.split('\n\n\n').filter((pgn) => pgn.trim() !== ''));

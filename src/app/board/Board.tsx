@@ -283,7 +283,11 @@ const Board: React.FC<BoardProps> = ({ config, onInitialize, onMove }) => {
         <Box width={1} height={1} sx={{ overflow: 'hidden' }}>
             <div
                 ref={boardRef}
-                style={{ width: '200%', height: '200%', transform: 'translateY(-50%)' }}
+                style={{
+                    width: '200%',
+                    height: '200%',
+                    transform: 'translate(-25%, -25%)',
+                }}
             />
 
             <Dialog open={promotion !== null} onClose={onCancelPromotion}>
