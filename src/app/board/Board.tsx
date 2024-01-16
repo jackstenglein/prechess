@@ -286,7 +286,7 @@ const Board: React.FC<BoardProps> = ({ config, onInitialize, onMove }) => {
                 style={{
                     width: '200%',
                     height: '200%',
-                    transform: 'translate(-25%, -25%)',
+                    transform: 'translate(-24.9%, -24.9%)',
                 }}
             />
 

@@ -55,7 +55,6 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ pgn, sx, onNextPuzzle }) => {
         board.set({
             fen: chess.fen(),
             turnColor: toColor(chess),
-            orientation: toColor(chess),
             lastMove: [],
             movable: {
                 color: toColor(chess),

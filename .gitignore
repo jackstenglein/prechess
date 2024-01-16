@@ -36,4 +36,4 @@ yarn-error.log*
 next-env.d.ts
 
 # Data files uploaded to S3
-prechess.pgn
+prechess*.pgn
