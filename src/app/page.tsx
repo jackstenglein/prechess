@@ -7,8 +7,10 @@ import {
     CircularProgress,
     Container,
     CssBaseline,
+    Divider,
     LinearProgress,
     LinearProgressProps,
+    Link,
     Stack,
     ThemeProvider,
     Typography,
@@ -48,7 +50,7 @@ function LinearProgressWithLabel(
                 />
             </Box>
             <Typography variant='body2' color='text.secondary'>
-                {props.value}/{props.max} Exercises
+                {props.value}/{props.max}
             </Typography>
         </Stack>
     );
@@ -118,11 +120,11 @@ function Prechess() {
         <Container
             maxWidth={false}
             sx={{
-                pt: 4,
-                pb: 4,
+                pt: 1,
+                pb: 1,
                 px: '0 !important',
                 '--gap': '16px',
-                '--site-header-height': '80px',
+                '--site-header-height': '20px',
                 '--site-header-margin': '150px',
                 '--player-header-height': '0px',
                 '--toc-width': '21vw',
@@ -141,19 +143,19 @@ function Prechess() {
                     display: 'grid',
                     rowGap: '0px',
                     gridTemplateRows: {
-                        xs: 'auto auto',
+                        xs: 'auto auto auto',
                     },
                     gridTemplateColumns: {
                         xs: '1fr',
                         md: 'auto var(--board-size) auto',
                     },
                     gridTemplateAreas: {
-                        xs: '"subtitle" "pgn"',
-                        md: '". subtitle ." ". pgn ."',
+                        xs: '"subtitle" "pgn" "about"',
+                        md: '". subtitle ." ". pgn ." ". about ."',
                     },
                 }}
             >
-                <Stack mt={3} gridArea='subtitle'>
+                <Stack mt={1} gridArea='subtitle'>
                     {index < pgns.length ? (
                         <LinearProgressWithLabel value={index} max={pgns.length} />
                     ) : (
@@ -173,6 +175,17 @@ function Prechess() {
                         onNextPuzzle={onNextPuzzle}
                     />
                 )}
+
+                <Stack mt={5} gridArea='about' alignItems='center'>
+                    <Typography variant='h4'>PreChess</Typography>
+                    <Stack direction='row' spacing={1}>
+                        <Link href='https://www.buymeacoffee.com/prechess'>about</Link>
+                        <Divider orientation='vertical' />
+                        <Link href='https://www.buymeacoffee.com/prechess'>support</Link>
+                        <Divider orientation='vertical' />
+                        <Link href='https://www.buymeacoffee.com/prechess'>contact</Link>
+                    </Stack>
+                </Stack>
             </Box>
         </Container>
     );
